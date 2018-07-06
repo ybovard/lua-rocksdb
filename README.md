@@ -1,11 +1,19 @@
 lua-rocksdb
 =
-Lua binding for RocksDB
+Lua binding for RocksDB. Fork of https://github.com/zaherm/lua-rocksdb.git to add parameter instead of modifying Makefile
 
 Installation
 ===
 * Install RocksDB (make shared_lib, make static_lib), download from: https://github.com/facebook/rocksdb
-* Update the Makefile if needed to point at the correct include/lib paths
+* Correct the library path if needed:
+ * LUA_VERSION    Example: LUA_VERSION="5.3"
+ * LUA_INC        Example: LUA_INC="-I/usr/local/include/lua"
+ * LUA_LIB        Example: LUA_LIB="-L/usr/local/lib/lua"
+ * ROCKSDB_INC    Example: ROCKSDB_INC="-I/usr/local/include/rocksdb"
+ * ROCKSDB_LIB    Example: ROCKSDB_LIB="-L/usr/local/lib/rocksdb" 
+```
+lua-rocksdb$ LUA_VERSION=5.3 ROCKSDB_INC="-I/root/rocksdb/include" make
+```
 
 Example
 ===

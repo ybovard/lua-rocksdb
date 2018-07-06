@@ -1,30 +1,31 @@
 UNAME := $(shell uname)
 all-tests := $(basename $(wildcard test/*.lua))
 
-LIB_PATH= /usr/local/lib64
-INC_PATH= /usr/local/include
-BIN_PATH= /usr/bin
-LUA_LIB= -L$(LIB_PATH) -llua
-LUA_INC= -I$(INC_PATH) -I$(INC_PATH)/lua
-ROCKSDB_INC=
-ROCKSDB_LIB= -lrocksdb
+######################################
+# Variabes that can be setted:
+#   LUA_VERSION    Example: LUA_VERSION="5.3"
+#   LUA_INC        Example: LUA_INC="-I/usr/local/include/lua"
+#   LUA_LIB        Example: LUA_LIB="-L/usr/local/lib/lua"
+#   ROCKSDB_INC        Example: ROCKSDB_INC="-I/usr/local/include/rocksdb"
+#   ROCKSDB_LIB        Example: ROCKSDB_LIB="-L/usr/local/lib/rocksdb"
+######################################
+
+LUA_LIB_DEF= 
+LUA_INC_DEF= -I/usr/include/lua${LUA_VERSION}
+ROCKSDB_LIB_DEF=
+ROCKSDB_INC_DEF=
 EXTRACFLAGS= -std=c99 -undefined -fPIC
 
-# change these based on your installation
-ifeq ($(UNAME), Darwin)
-	LIB_PATH= /usr/local/lib
-	INC_PATH= /usr/local/include
-	BIN_PATH= /usr/local/bin
-	LUA_LIB= -L$(LIB_PATH) -llua5.1
-	LUA_INC= -I$(INC_PATH) -I$(INC_PATH)/lua-5.1
-	EXTRACFLAGS= -std=c99 -undefined dynamic_lookup -fPIC
-endif
+LUA_INC := $(if $(LUA_INC),$(LUA_INC), $(LUA_INC_DEF))
+LUA_LIB := $(if $(LUA_LIB),$(LUA_LIB), $(LUA_LIB_DEF))
+ROCKSDB_INC := $(if $(ROCKSDB_INC),$(ROCKSDB_INC), $(ROCKSDB_INC_DEF))
+ROCKSDB_LIB := $(if $(ROCKSDB_LIB),$(ROCKSDB_LIB), $(ROCKSDB_LIB_DEF))
 
-
-INC= $(LUA_INC) $(ROCKSDB_INC)
-LIB= $(LUA_LIB) $(ROCKSDB_LIB)
+INC= -I/usr/include $(LUA_INC) $(ROCKSDB_INC)
+LIB= -L/usr/lib $(LUA_LIB) $(ROCKSDB_LIB)
 WARN= -Wall
 CFLAGS= -O2 $(WARN) $(INC)
+
 
 MYNAME= rocksdb
 MYLIB= $(MYNAME)
@@ -37,6 +38,8 @@ OBJS= src/l$(MYLIB).o \
 			src/l$(MYLIB)_iter.o
 
 all: $T
+
+print-%  : ; @echo $* = $($*)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
